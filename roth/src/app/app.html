@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roth IRA Calculator — See What Your Future Holds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #0f6e56;
+    --teal-mid: #1d9e75;
+    --teal-light: #e1f5ee;
+    --teal-pale: #f2faf7;
+    --ink: #141412;
+    --ink-mid: #3a3a36;
+    --ink-soft: #7a7a72;
+    --ink-faint: #c8c8be;
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --border: #e8e7e0;
+    --amber: #ba7517;
+    --amber-light: #faeeda;
+    --red: #a32d2d;
+    --red-light: #fcebeb;
+    --green-text: #0f6e56;
+    --green-bg: #e1f5ee;
+    --nav-bg: rgba(250,249,246,0.92);
+  }
+
+  html.dark {
+    --teal: #1d9e75;
+    --teal-mid: #2ec48f;
+    --teal-light: #0a3328;
+    --teal-pale: #0c1f1a;
+    --ink: #f0efe8;
+    --ink-mid: #c8c7be;
+    --ink-soft: #8a8a80;
+    --ink-faint: #4a4a44;
+    --bg: #111110;
+    --surface: #1a1a18;
+    --border: #2a2a26;
+    --amber: #ef9f27;
+    --amber-light: #2a1f08;
+    --red: #e24b4a;
+    --red-light: #2a0f0f;
+    --green-text: #2ec48f;
+    --green-bg: #0a2a1e;
+    --nav-bg: rgba(17,17,16,0.92);
+  }
+
+  *, *::before, *::after { transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--teal);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--teal); }
+
+  /* DARK MODE TOGGLE */
+  .dark-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .dark-toggle:hover { color: var(--teal); border-color: var(--teal); }
+
+  /* HERO */
+  .hero {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .hero-scroll {
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .hero-scroll::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: var(--ink-faint);
+    margin-top: 12px;
+  }
+
+  .hero-scroll-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* MAIN LAYOUT */
+  .page-body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .calc-header {
+    background: var(--teal);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .calc-header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: white;
+    letter-spacing: -0.01em;
+  }
+
+  .calc-header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 2px;
+  }
+
+  .elig-badge {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .elig-full { background: rgba(255,255,255,0.2); color: white; }
+  .elig-partial { background: var(--amber-light); color: var(--amber); }
+  .elig-none { background: var(--red-light); color: var(--red); }
+
+  .calc-body {
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  @media (max-width: 720px) {
+    .calc-body { grid-template-columns: 1fr; gap: 2rem; }
+    nav .nav-links { display: none; }
+  }
+
+  .col-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+
+  /* FIELD */
+  .field { margin-bottom: 1.5rem; }
+
+  .field-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .field-name {
+    font-size: 13px;
+    color: var(--ink-mid);
+    font-weight: 400;
+  }
+
+  .field-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  .field-warn {
+    font-size: 11px;
+    color: var(--amber);
+    background: var(--amber-light);
+    border-radius: 6px;
+    padding: 5px 9px;
+    margin-top: 5px;
+    display: none;
+  }
+
+  /* SLIDERS */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: transform 0.15s;
+  }
+
+  input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.15); }
+  input[type=range]::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--teal); border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18); cursor: pointer;
+  }
+
+  select {
+    width: 100%;
+    padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a72' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  /* DIVIDER */
+  .col-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  /* RESULTS STRIP */
+  .results-strip {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    background: var(--teal-pale);
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 600px) { .results-grid { grid-template-columns: 1fr 1fr; } }
+
+  .result-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .result-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .result-value.teal { color: var(--teal); }
+  .result-sub { font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+
+  /* ADVANTAGE BANNER */
+  .adv-banner {
+    background: var(--green-bg);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--green-text);
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+  }
+
+  .adv-banner strong { font-weight: 500; }
+
+  /* BARS */
+  .bars { margin-bottom: 0.5rem; }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .bar-name {
+    font-size: 12px;
+    color: var(--ink-soft);
+    width: 80px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 22px;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .bar-fill.roth { background: var(--teal-mid); }
+  .bar-fill.taxable { background: var(--ink-faint); }
+  .bar-fill.delayed { background: #f0c97b; }
+
+  .bar-amt {
+    font-size: 12px;
+    color: var(--ink-soft);
+    width: 80px;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  /* DELAY SECTION */
+  .delay-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .delay-header {
+    padding: 1.75rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .delay-header-text h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .delay-header-text p {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .delay-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink-mid);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .toggle-switch {
+    width: 40px;
+    height: 22px;
+    background: var(--border);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch.on { background: var(--teal); }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .toggle-switch.on::after { transform: translateX(18px); }
+
+  .delay-body {
+    padding: 2rem 2.5rem;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (max-width: 720px) { .delay-body { grid-template-columns: 1fr; } }
+
+  .delay-cost-box {
+    background: var(--red-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .delay-cost-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--red);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .delay-cost-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--red);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .delay-cost-sub {
+    font-size: 12px;
+    color: #a32d2d99;
+    line-height: 1.4;
+  }
+
+  .delay-chart {
+    position: relative;
+  }
+
+  .delay-chart-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .delay-bars { }
+
+  .delay-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .delay-bar-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    width: 90px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .delay-bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--bg);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+
+  .delay-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .delay-bar-fill.now { background: var(--teal-mid); }
+  .delay-bar-fill.later5 { background: #f0c97b; color: var(--ink-mid); }
+  .delay-bar-fill.later10 { background: #e89b4a; }
+
+  /* INFO SECTIONS */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 820px) { .info-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 500px) { .info-grid { grid-template-columns: 1fr; } }
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+  }
+
+  .info-card-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--teal-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 18px;
+  }
+
+  .info-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .info-card p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* LIMITS TABLE */
+  .limits-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .limits-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .limits-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .limits-table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    font-weight: 500;
+    padding: 0 0 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .limits-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-mid);
+    vertical-align: top;
+  }
+
+  .limits-table tr:last-child td { border-bottom: none; }
+  .limits-table td:first-child { color: var(--ink); font-weight: 500; }
+  .limits-table .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--green-bg);
+    color: var(--green-text);
+    font-weight: 500;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero { animation: fadeUp 0.6s ease both; }
+  .calc-card { animation: fadeUp 0.6s 0.15s ease both; }
+  .delay-section { animation: fadeUp 0.6s 0.25s ease both; }
+  .info-grid { animation: fadeUp 0.6s 0.35s ease both; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">Roth·IQ</a>
+  <ul class="nav-links">
+    <li><a href="#calculator">Calculator</a></li>
+    <li><a href="#cost-of-delay">Cost of delay</a></li>
+    <li><a href="#limits">2026 limits</a></li>
+    <li><a href="#learn">Learn</a></li>
+  </ul>
+  <button class="dark-toggle" id="dark-toggle" aria-label="Toggle dark mode">
+    <span id="dark-icon">🌙</span>
+    <span id="dark-label">Dark</span>
+  </button>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">Roth IRA Calculator — Updated for 2026</p>
+  <h1>See what your money could become <em>tax-free</em></h1>
+  <p class="hero-sub">Drag the sliders. Watch your future update in real time. No sign-up, no ads, no agenda.</p>
+  <div class="hero-scroll-wrap">
+    <span class="hero-scroll">Start calculating</span>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <!-- CALCULATOR -->
+  <div class="calc-card" id="calculator">
+    <div class="calc-header">
+      <div>
+        <div class="calc-header-title">Your Roth IRA Projection</div>
+        <div class="calc-header-sub">Adjust any value — results update instantly</div>
+      </div>
+      <span class="elig-badge elig-full" id="elig-badge">✓ Full contribution eligible</span>
+    </div>
+
+    <div class="calc-body">
+      <!-- LEFT COL -->
+      <div>
+        <p class="col-label">Your situation</p>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Current age</span>
+            <span class="field-val" id="v-age">30</span>
+          </div>
+          <input type="range" min="18" max="70" value="30" step="1" id="s-age">
+        </div>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Retirement age</span>
+            <span class="field-val" id="v-ret">65</span>
+          </div>
+          <input type="range" min="50" max="80" value="65" step="1" id="s-ret">
+          <div class="field-hint" id="hint-years">35 years of compounding growth.</div>
+        </div>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Annual contribution</span>
+            <span class="field-val" id="v-contrib">$7,500</span>
+          </div>
+          <input type="range" min="500" max="8600" value="7500" step="100" id="s-contrib">
+          <div class="field-warn" id="warn-contrib">Exceeds 2026 IRS contribution limit</div>
+        </div>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Starting balance</span>
+            <span class="field-val" id="v-bal">$0</span>
+          </div>
+          <input type="range" min="0" max="150000" value="0" step="1000" id="s-bal">
+        </div>
+
+        <hr class="col-divider">
+        <p class="col-label">Eligibility</p>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Household income</span>
+            <span class="field-val" id="v-income">$100,000</span>
+          </div>
+          <input type="range" min="0" max="300000" value="100000" step="5000" id="s-income">
+        </div>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Filing status</span>
+          </div>
+          <select id="s-filing">
+            <option value="single">Single</option>
+            <option value="joint">Married filing jointly</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- RIGHT COL -->
+      <div>
+        <p class="col-label">Assumptions</p>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Annual return</span>
+            <span class="field-val" id="v-rate">7%</span>
+          </div>
+          <input type="range" min="1" max="15" value="7" step="0.5" id="s-rate">
+          <div class="field-hint">S&P 500 avg ~10% nominal, ~7% inflation-adjusted. Higher = bigger compounding effect.</div>
+        </div>
+
+        <div class="field">
+          <div class="field-top">
+            <span class="field-name">Marginal tax rate</span>
+            <span class="field-val" id="v-tax">22%</span>
+          </div>
+          <input type="range" min="10" max="37" value="22" step="1" id="s-tax">
+          <div class="field-hint">Your top federal tax bracket. The higher this is, the more the Roth advantage grows.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-strip">
+      <div class="adv-banner" id="adv-banner">—</div>
+      <div class="results-grid">
+        <div class="result-stat">
+          <span class="result-label">Roth IRA balance</span>
+          <span class="result-value teal" id="r-roth">—</span>
+          <span class="result-sub">Tax-free at 59½+</span>
+        </div>
+        <div class="result-stat">
+          <span class="result-label">Taxable brokerage</span>
+          <span class="result-value" id="r-taxable">—</span>
+          <span class="result-sub">Growth taxed annually</span>
+        </div>
+        <div class="result-stat">
+          <span class="result-label">Roth advantage</span>
+          <span class="result-value" id="r-advantage">—</span>
+          <span class="result-sub">Extra at retirement</span>
+        </div>
+      </div>
+
+      <div class="bars">
+        <div class="bar-row">
+          <span class="bar-name">Roth IRA</span>
+          <div class="bar-track"><div class="bar-fill roth" id="bar-roth" style="width:100%"></div></div>
+          <span class="bar-amt" id="bar-roth-amt"></span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-name">Taxable</span>
+          <div class="bar-track"><div class="bar-fill taxable" id="bar-taxable" style="width:80%"></div></div>
+          <span class="bar-amt" id="bar-taxable-amt"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COST OF DELAY -->
+  <div class="delay-section" id="cost-of-delay">
+    <div class="delay-header">
+      <div class="delay-header-text">
+        <h2>The cost of waiting</h2>
+        <p>Every year you delay is compounding you'll never get back. See exactly what it costs.</p>
+      </div>
+      <label class="delay-toggle" id="toggle-label">
+        <div class="toggle-switch on" id="delay-toggle"></div>
+        Show comparison
+      </label>
+    </div>
+    <div class="delay-body" id="delay-body">
+      <div class="delay-cost-box">
+        <div class="delay-cost-label">Cost of waiting 5 years</div>
+        <div class="delay-cost-value" id="delay-5-cost">—</div>
+        <div class="delay-cost-sub" id="delay-5-sub">less at retirement if you start in 5 years</div>
+      </div>
+      <div class="delay-chart">
+        <div class="delay-chart-label">Projected Roth IRA balance at retirement</div>
+        <div class="delay-bars">
+          <div class="delay-bar-row">
+            <span class="delay-bar-label">Start today</span>
+            <div class="delay-bar-track">
+              <div class="delay-bar-fill now" id="dbar-now" style="width:100%">
+                <span id="dbar-now-val"></span>
+              </div>
+            </div>
+          </div>
+          <div class="delay-bar-row">
+            <span class="delay-bar-label">Wait 5 years</span>
+            <div class="delay-bar-track">
+              <div class="delay-bar-fill later5" id="dbar-5" style="width:80%">
+                <span id="dbar-5-val"></span>
+              </div>
+            </div>
+          </div>
+          <div class="delay-bar-row">
+            <span class="delay-bar-label">Wait 10 years</span>
+            <div class="delay-bar-track">
+              <div class="delay-bar-fill later10" id="dbar-10" style="width:60%">
+                <span id="dbar-10-val"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top: 1rem;" id="delay-note"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO CARDS -->
+  <div class="info-grid" id="learn">
+    <div class="info-card">
+      <div class="info-card-icon">🌱</div>
+      <h3>Tax-free compounding</h3>
+      <p>Unlike a taxable account, your Roth IRA grows without annual tax drag. Every dollar of growth stays invested and compounds — indefinitely.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">🔄</div>
+      <h3>Backdoor Roth</h3>
+      <p>Earn too much to contribute directly? High earners can make a non-deductible traditional IRA contribution, then convert it to a Roth. Do this carefully with a tax advisor.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">📋</div>
+      <h3>Contribution flexibility</h3>
+      <p>Roth IRA contributions (not earnings) can be withdrawn anytime, penalty-free. This makes it a better emergency backstop than most people realize.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">🏢</div>
+      <h3>Max your employer first</h3>
+      <p>Always capture your full 401(k) match before contributing to an IRA. A 100% match is an instant 100% return — nothing beats it.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">⚖️</div>
+      <h3>Roth vs traditional</h3>
+      <p>Roth wins if your future tax rate will be higher than today's. Traditional wins if you expect lower taxes in retirement. When unsure, Roth — tax-free growth is hard to beat.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">⏱️</div>
+      <h3>The five-year rule</h3>
+      <p>Roth earnings can only be withdrawn tax-free after the account has been open 5 years AND you're 59½ or older. Contributions are always accessible.</p>
+    </div>
+  </div>
+
+  <!-- LIMITS TABLE -->
+  <div class="limits-card" id="limits">
+    <h2>2026 Roth IRA limits & phase-outs</h2>
+    <table class="limits-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Limit / Range</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Contribution limit (under 50)</td>
+          <td>$7,500</td>
+          <td><span class="tag">2026</span></td>
+        </tr>
+        <tr>
+          <td>Contribution limit (50+)</td>
+          <td>$8,600</td>
+          <td>Catch-up contribution included</td>
+        </tr>
+        <tr>
+          <td>Single filer — full contribution</td>
+          <td>Below $150,000</td>
+          <td>Modified AGI threshold</td>
+        </tr>
+        <tr>
+          <td>Single filer — phase-out range</td>
+          <td>$150,000 – $165,000</td>
+          <td>Partial contribution allowed</td>
+        </tr>
+        <tr>
+          <td>Single filer — ineligible</td>
+          <td>Above $165,000</td>
+          <td>Consider Backdoor Roth</td>
+        </tr>
+        <tr>
+          <td>Joint filer — full contribution</td>
+          <td>Below $236,000</td>
+          <td>Modified AGI threshold</td>
+        </tr>
+        <tr>
+          <td>Joint filer — phase-out range</td>
+          <td>$236,000 – $246,000</td>
+          <td>Partial contribution allowed</td>
+        </tr>
+        <tr>
+          <td>Joint filer — ineligible</td>
+          <td>Above $246,000</td>
+          <td>Consider Backdoor Roth</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  <p>This calculator is for illustrative purposes only. Results are projections based on simplified assumptions and are not adjusted for inflation. Contribution limits and income thresholds shown are for 2026 and subject to IRS changes. This is not financial advice — consult a qualified financial advisor for personalized guidance.</p>
+  <p style="margin-top:8px;">Roth·IQ · Built as a design concept</p>
+</footer>
+
+<script>
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  const fmtShort = n => {
+    if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n/1000) + 'K';
+    return '$' + Math.round(n);
+  };
+
+  function fv(pv, rate, n, pmt) {
+    const r = rate / 100;
+    if (r === 0) return pv + pmt * n;
+    return pv * Math.pow(1+r, n) + pmt * ((Math.pow(1+r,n)-1)/r);
+  }
+
+  function eligibility(income, filing) {
+    const limits = {
+      single: { full: 150000, out: 165000 },
+      joint:  { full: 236000, out: 246000 }
+    };
+    const l = limits[filing];
+    if (income <= l.full) return { status: 'full', label: '✓ Full contribution eligible' };
+    if (income >= l.out)  return { status: 'none', label: '✗ Over limit — consider Backdoor Roth' };
+    return { status: 'partial', label: '~ Partial contribution eligible' };
+  }
+
+  let delayVisible = true;
+
+  document.getElementById('toggle-label').addEventListener('click', () => {
+    delayVisible = !delayVisible;
+    document.getElementById('delay-toggle').classList.toggle('on', delayVisible);
+    document.getElementById('delay-body').style.display = delayVisible ? 'grid' : 'none';
+  });
+
+  function calc() {
+    const age    = +document.getElementById('s-age').value;
+    const ret    = +document.getElementById('s-ret').value;
+    const contrib= +document.getElementById('s-contrib').value;
+    const bal    = +document.getElementById('s-bal').value;
+    const rate   = +document.getElementById('s-rate').value;
+    const tax    = +document.getElementById('s-tax').value;
+    const income = +document.getElementById('s-income').value;
+    const filing = document.getElementById('s-filing').value;
+
+    document.getElementById('v-age').textContent    = age;
+    document.getElementById('v-ret').textContent    = ret;
+    document.getElementById('v-contrib').textContent= fmt(contrib);
+    document.getElementById('v-bal').textContent    = fmt(bal);
+    document.getElementById('v-rate').textContent   = rate + '%';
+    document.getElementById('v-tax').textContent    = tax + '%';
+    document.getElementById('v-income').textContent = fmt(income);
+
+    const years = Math.max(1, ret - age);
+    document.getElementById('hint-years').textContent = years + ' years of compounding growth.';
+
+    const limit = age >= 50 ? 8600 : 7500;
+    document.getElementById('warn-contrib').style.display = contrib > limit ? 'block' : 'none';
+
+    // Roth vs taxable
+    const rothVal   = fv(bal, rate, years, contrib);
+    const taxRate   = rate * (1 - tax/100);
+    const taxableVal= fv(bal, taxRate, years, contrib);
+    const diff      = rothVal - taxableVal;
+    const diffPct   = Math.round((diff/taxableVal)*100);
+
+    document.getElementById('r-roth').textContent     = fmt(rothVal);
+    document.getElementById('r-taxable').textContent  = fmt(taxableVal);
+    document.getElementById('r-advantage').textContent= fmt(diff);
+
+    document.getElementById('adv-banner').innerHTML =
+      `The Roth IRA leaves you <strong>${fmt(diff)}</strong> more at retirement — <strong>${diffPct}%</strong> ahead of a taxable account, thanks to ${years} years of tax-free compounding.`;
+
+    const maxBar = Math.max(rothVal, taxableVal);
+    document.getElementById('bar-roth').style.width    = Math.round((rothVal/maxBar)*100) + '%';
+    document.getElementById('bar-taxable').style.width = Math.round((taxableVal/maxBar)*100) + '%';
+    document.getElementById('bar-roth-amt').textContent    = fmtShort(rothVal);
+    document.getElementById('bar-taxable-amt').textContent = fmtShort(taxableVal);
+
+    // Eligibility
+    const elig = eligibility(income, filing);
+    const badge = document.getElementById('elig-badge');
+    badge.textContent = elig.label;
+    badge.className = 'elig-badge elig-' + elig.status;
+
+    // Cost of delay
+    const years5  = Math.max(1, ret - (age + 5));
+    const years10 = Math.max(1, ret - (age + 10));
+    const val5  = fv(bal, rate, years5,  contrib);
+    const val10 = fv(bal, rate, years10, contrib);
+
+    const cost5  = rothVal - val5;
+    const cost10 = rothVal - val10;
+
+    document.getElementById('delay-5-cost').textContent = fmt(cost5);
+    document.getElementById('delay-5-sub').textContent  = `less at retirement if you wait 5 years to start`;
+
+    const maxDelay = Math.max(rothVal, val5, val10);
+    document.getElementById('dbar-now').style.width = Math.round((rothVal/maxDelay)*100) + '%';
+    document.getElementById('dbar-5').style.width   = Math.round((val5/maxDelay)*100) + '%';
+    document.getElementById('dbar-10').style.width  = Math.round((val10/maxDelay)*100) + '%';
+
+    document.getElementById('dbar-now-val').textContent = fmtShort(rothVal);
+    document.getElementById('dbar-5-val').textContent   = fmtShort(val5);
+    document.getElementById('dbar-10-val').textContent  = fmtShort(val10);
+
+    document.getElementById('delay-note').textContent =
+      `Starting today vs. 10 years later costs you ${fmt(cost10)} — almost ${Math.round(cost10/contrib)} years of contributions lost.`;
+  }
+
+  ['s-age','s-ret','s-contrib','s-bal','s-rate','s-tax','s-income','s-filing'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calc);
+    document.getElementById(id).addEventListener('change', calc);
+  });
+
+  // Dark mode
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('dark-toggle');
+  const darkIcon = document.getElementById('dark-icon');
+  const darkLabel = document.getElementById('dark-label');
+
+  function setDark(on) {
+    html.classList.toggle('dark', on);
+    darkIcon.textContent = on ? '☀️' : '🌙';
+    darkLabel.textContent = on ? 'Light' : 'Dark';
+    try { localStorage.setItem('riq-dark', on ? '1' : '0'); } catch(e) {}
+  }
+
+  toggleBtn.addEventListener('click', () => setDark(!html.classList.contains('dark')));
+
+  // Respect system preference on first load
+  try {
+    const saved = localStorage.getItem('riq-dark');
+    if (saved !== null) setDark(saved === '1');
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) setDark(true);
+  } catch(e) {}
+
+  calc();
+</script>
+</body>
+</html>
+
